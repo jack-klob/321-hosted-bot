@@ -1,5 +1,3 @@
-[![Bot8 CI](https://github.com/uvic-seng321/project-bot8/actions/workflows/django.yml/badge.svg)](https://github.com/uvic-seng321/project-bot8/actions/workflows/django.yml)
-
 A discord bot to help with task management
 
 # Build
@@ -24,7 +22,3 @@ python manage.py test
 ```
 Coverage reports are generated to the terminal using `django-nose`.
 
-# Coverage Report
-Due to errors with CodeCov, a coverage badge was not possible. A screenshot of the most recent
-coverage report is shown below
-![Most recent coverage report](/discordBot/coverage_report/recent-coverage.png)
