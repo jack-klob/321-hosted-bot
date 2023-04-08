@@ -1,7 +1,7 @@
 import os
 from behave import *
 from dotenv import load_dotenv
-from test_utils import TestBotCommands
+from test_utils.test_bot_commands import TestBotCommands
 from hamcrest import assert_that, equal_to
 
 @given(u'a user')
