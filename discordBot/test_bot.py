@@ -51,6 +51,7 @@ class TestBotCommands():
         Get the message sent after the last message sent by this class.
         Will timeout and raise Exception if there has been no reply for a while
         '''
+        time.sleep(0.4)
         last_message = self.read_last_message()
 
         if self._sent_mesage_id:
