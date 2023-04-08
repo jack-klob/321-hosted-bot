@@ -19,20 +19,20 @@ async def on_ready():
     await channel.send("Running")
 
 @bot.command(name = 'create_task', help = 'Creates a task')
-async def task_creation(ctx, *title):
+async def task_creation(ctx, *args):
+    if not args:
+        await ctx.send("No task name given")
+        return
 
-    title = " ".join(title)
+    title = " ".join(args)
 
-    if title is None:
-        await ctx.send("No Task Name Given")
+    url = baseurl + f"task"
+    response = requests.post(url=url, data={"title": title})
+    
+    if response.status_code == 201:
+        await ctx.send(f"The task \"{title}\" has been created!")
     else:
-        url = baseurl + f"task"
-        response = requests.post(url=url, data={"title": title})
+        await ctx.send("An error occured when trying to create the task")
         
-        if response.status_code == 201:
-            await ctx.send(f"The task \"{title}\" has been created!")
-
-        else:
-            await ctx.send("A problem occurred when trying to create the task")
 
 bot.run(TOKEN)
