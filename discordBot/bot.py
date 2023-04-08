@@ -25,9 +25,10 @@ async def task_creation(ctx, *args):
         return
 
     title = " ".join(args)
+    guild_id = ctx.guild.id
 
     url = baseurl + f"task"
-    response = requests.post(url=url, data={"title": title})
+    response = requests.post(url=url, data={"title": title, 'guild' : guild_id})
     
     if response.status_code == 201:
         await ctx.send(f"The task \"{title}\" has been created!")
