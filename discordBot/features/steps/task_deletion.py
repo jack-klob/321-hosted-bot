@@ -1,8 +1,8 @@
 import os
 from behave import *
 from dotenv import load_dotenv
-from test_utils import TestBotCommands
-from api_connection import APIConnection
+from test_utils.test_bot_commands import TestBotCommands
+from test_utils.api_connection import APIConnection
 from hamcrest import assert_that, equal_to
 import json
 
@@ -13,12 +13,12 @@ def step_impl(context,task_name):
     APIConnection.create_task(task_name)
 
     
-@when(u'the user inputs "!delete <id>" with the id of the task')
+@when(u'the user inputs "!delete_task <id>" with the id of the task')
 def step_impl(context):
     tasks = json.loads(APIConnection.get_list().text)
     context.id = tasks[-1]['id']
 
-    context.commands.send_message(f'!delete {context.id}')
+    context.commands.send_message(f'!delete_task {context.id}')
     
 
 
