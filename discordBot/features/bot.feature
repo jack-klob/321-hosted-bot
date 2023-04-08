@@ -2,10 +2,10 @@ Feature: Task Creation
 
     Scenario: Successful task creation
         Given a user
-        When the user inputs a command to create a task
-        Then the bot responds with a confimation message of the task creation
+        When the user inputs "!create_task new task"
+        Then the bot responds with "The task "new task" has been created!"
 
     Scenario: Task creation no title
         Given a user
-        When the user tries to create a task with no title
-        Then the bot responds with an error message
+        When the user inputs "!create_task"
+        Then the bot responds with "No task name given"
