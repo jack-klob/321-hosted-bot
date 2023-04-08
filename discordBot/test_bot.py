@@ -25,8 +25,8 @@ class TestBotCommands():
         self.TOKEN = TOKEN
         self._sent_mesage_id = 0
 
-        # the specific testing channel id in our discord server
-        channel_id = "1090771155163549796"
+        # the specific testing channel id in testing discord server
+        channel_id = "1094137655568105522"
         self._url = f"https://discordapp.com/api/channels/{channel_id}/messages"
     
         self._headers = { 
