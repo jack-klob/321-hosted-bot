@@ -14,7 +14,8 @@ permissions:
 
 jobs:
   build:
-
+    env:
+      TEST_TOKEN : ${{ secrets.TEST_TOKEN }}
     runs-on: ubuntu-latest
 
     steps:
