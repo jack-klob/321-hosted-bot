@@ -13,6 +13,7 @@ class TestableBot(commands.Bot):
         ctx = await self.get_context(message)
         await self.invoke(ctx)
 
+
 class TestBotCommands():
     '''
     Class used to send and read messages from a test channel in the group
