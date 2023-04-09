@@ -14,23 +14,20 @@ def step_impl(context,task_name):
 
 @given(u'an id for a created task')
 def step_impl(context):
-    tasks = json.loads(APIConnection.get_list().text)
+    tasks = json.loads(APIConnection.get_list_guild().text)
     context.id = tasks[-1]['id']
     
 
 @given(u'an id for a task that does not exist')
 def step_impl(context):
-    tasks = json.loads(APIConnection.get_list().text)
-    context.id = int(tasks[-1]['id']) + 1
+    tasks = json.loads(APIConnection.get_list_all().text)
+    context.id = int(tasks[-1]['id']) + 100
 
 ###############################################################
 
     
 @when(u'the user inputs "!delete_task <id>" with the id of the task')
 def step_impl(context):
-    tasks = json.loads(APIConnection.get_list().text)
-    context.id = tasks[-1]['id']
-
     context.commands.send_message(f'!delete_task {context.id}')
     
 

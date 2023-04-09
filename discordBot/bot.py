@@ -39,9 +39,12 @@ async def task_creation(ctx, *args):
 async def task_delete(ctx, id):
     url = f'{baseurl}/task/{id}'
     r = requests.delete(url=url)
+    print(r.text)
 
     if r.status_code == 204:
         await ctx.send(f'Task with id {id} deleted')
+    if r.status_code == 404:
+        await ctx.send(f'Task with id {id} does not exist')
     else:
         await ctx.send("An error occured when trying to delete task")
     

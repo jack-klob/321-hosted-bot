@@ -19,8 +19,13 @@ class APIConnection():
         return requests.post(url=url, data={"title": title, 'guild' : cls._guild_id})
     
     @classmethod
-    def get_list(cls):
+    def get_list_guild(cls):
         url = f'{cls._baseurl}/task?guild={cls._guild_id}'
+        return requests.get(url=url) 
+    
+    @classmethod
+    def get_list_all(cls):
+        url = f'{cls._baseurl}/task'
         return requests.get(url=url) 
     
     @classmethod
