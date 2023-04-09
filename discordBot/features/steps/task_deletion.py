@@ -8,14 +8,12 @@ import json
 
 ###############################################################
 
-@given(u'a task "{task_name}" has been created')
-def step_impl(context,task_name):
-    APIConnection.create_task(task_name)
-
 @given(u'an id for a created task')
 def step_impl(context):
-    tasks = json.loads(APIConnection.get_list_guild().text)
-    context.id = tasks[-1]['id']
+    response = json.loads(APIConnection.create_task("Created task from test").text)
+    print(response)
+    context.id = response['id']
+
     
 
 @given(u'an id for a task that does not exist')

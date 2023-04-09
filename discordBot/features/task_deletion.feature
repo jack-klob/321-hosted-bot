@@ -12,4 +12,3 @@ Feature: Task Deletion
         And an id for a task that does not exist
         When the user inputs "!delete_task <id>" with the id of the task
         Then the bot outputs "Task with id <id> does not exist"
-        

@@ -1,4 +1,5 @@
 import requests
+import json
 
 class APIConnection():
     '''
@@ -32,4 +33,11 @@ class APIConnection():
     def get_task(cls, id):
         url = f'{cls._baseurl}/task/{id}'
         return requests.get(url=url)
+    
+    @classmethod
+    def delete_all_test_tasks(cls):
+        tasks = json.loads(cls.get_list_guild().text)
+        ids = [task['id'] for task in tasks]
+        for id in ids:
+            requests.delete(url=f'{cls._baseurl}/task/{id}')
         
