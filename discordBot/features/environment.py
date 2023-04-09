@@ -1,5 +1,23 @@
 from behave import *
 from test_utils.api_connection import APIConnection
+from test_utils.test_bot_commands import TestBotCommands
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+TOKEN = os.environ['TEST_TOKEN']
+commands = TestBotCommands(TOKEN)
+
+
+def before_all(context):
+    commands.send_message("-------- **Start of tests** --------")
+
+def before_feature(context, feature):
+    commands.send_message(f'**Feature: {feature.name}**')
+
+def before_scenario(context, scenario):
+    commands.send_message(f'**Scenario: {scenario.name}**')
+
 
 def after_all(context):
     APIConnection.delete_all_test_tasks()
