@@ -1,3 +1,5 @@
+[![CI status](https://github.com/uvic-seng321/bot8-discordbot/actions/workflows/python-app.yml/badge.svg)](https://github.com/uvic-seng321/bot8-discordbot/actions/workflows/python-app.yml)
+
 A discord bot to help with task management
 
 ## Steps: 
