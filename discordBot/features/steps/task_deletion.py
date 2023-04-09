@@ -6,11 +6,24 @@ from test_utils.api_connection import APIConnection
 from hamcrest import assert_that, equal_to
 import json
 
-
+###############################################################
 
 @given(u'a task "{task_name}" has been created')
 def step_impl(context,task_name):
     APIConnection.create_task(task_name)
+
+@given(u'an id for a created task')
+def step_impl(context):
+    tasks = json.loads(APIConnection.get_list().text)
+    context.id = tasks[-1]['id']
+    
+
+@given(u'an id for a task that does not exist')
+def step_impl(context):
+    tasks = json.loads(APIConnection.get_list().text)
+    context.id = int(tasks[-1]['id']) + 1
+
+###############################################################
 
     
 @when(u'the user inputs "!delete_task <id>" with the id of the task')
@@ -21,6 +34,7 @@ def step_impl(context):
     context.commands.send_message(f'!delete_task {context.id}')
     
 
+###############################################################
 
 @then(u'the bot outputs "Task with id <id> deleted"')
 def step_impl(context):
@@ -33,3 +47,10 @@ def step_impl(context):
 def step_impl(context):
     response = APIConnection.get_task(context.id)
     assert_that(response.status_code, equal_to(404))
+
+@then(u'the bot outputs "Task with id <id> does not exist"')
+def step_impl(context):
+    reply = context.commands.read_reply()['content']
+    expected = f'Task with id {context.id} does not exist'
+    assert_that(reply, equal_to(expected))
+
