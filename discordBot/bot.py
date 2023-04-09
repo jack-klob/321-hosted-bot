@@ -10,12 +10,11 @@ import asyncio
 alert_times = {} #Dictionary of alert times to be checked by the bot every minute Key=id and Value=alert time
 # backend currently must be hosted locally
 baseurl = 'https://321-hosted-backend.jack-klob.repl.co'
-
+channel_ids = {} #Dictionary of channel ids to be used by the bot to send messages to the correct channel Key=task id and Value=channel id
 load_dotenv()
 TOKEN = os.environ['DISCORD_TOKEN']
 
 bot = TestableBot(intents=discord.Intents.all(), command_prefix='!')
-channel_id = 1094137655568105522 # Replace with your channel ID
 
 @bot.event
 async def on_ready():
@@ -90,6 +89,7 @@ async def add_alert(ctx, id=None, alert=None):
         alert_dt = datetime.strptime(alert, '%Y-%m-%d %H:%M')
         alert_times[id]=alert_dt
         data = {"reminder": alert_dt}
+        channel_ids[id] = ctx.channel.id
         response = requests.put(url, data=data)
 
         if response.status_code == 200:
@@ -205,7 +205,7 @@ async def list_tasks_by_user(ctx, user=None):
 
 #Function to check if current time matches any alert time
 async def check_alerts():
-    channel = bot.get_channel(channel_id)
+    
     idsToPop = []
     while True:
         current_time = datetime.now()
@@ -214,11 +214,13 @@ async def check_alerts():
             print(f"current time: {current_time}, alert time: {alert_time}")
             if current_time >= alert_time:
                 print(f"Alerting id: {id}")
+                channel = bot.get_channel(channel_ids[id])
                 await channel.send(f"@everyone An alert for a task with id: {id} has occured!")
                 idsToPop.append(id)
         for ID in idsToPop: #Remove all the ids that have been alerted so we dont Alert more then once
             alert_times.pop(ID)
-            print(f"Removed {ID} from alert_times")
+            channel_ids.pop(ID)
+            print(f"Removed {ID} from alert_times and channel_ids")
         idsToPop = []
         await asyncio.sleep(60) # Check every minute
 
