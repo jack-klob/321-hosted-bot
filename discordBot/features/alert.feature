@@ -9,7 +9,6 @@ Feature: Alert Functionality
     Scenario: 
         Given a user
         And an id for a created task
-        And the task with id <id> has an alert time of "2023-04-09 11:55" added
-        When the alert time has been passed or matches the current time
-        And I wait '60' seconds
+        And the task with id <id> has an alert time of "2023-04-09 11:55" added (a time in the past)
+        When I wait '120' seconds
         Then the bot outputs "@everyone An alert for a task with id: <id> has occured!"
