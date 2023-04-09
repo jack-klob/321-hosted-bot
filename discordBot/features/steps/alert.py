@@ -6,9 +6,9 @@ from test_utils.api_connection import APIConnection
 from hamcrest import assert_that, equal_to
 from datetime import datetime
 
-@when(u'the user inputs <!add_alert <id>  "2023-04-09 11:55"> with the id of a task')
+@when(u'the user inputs <!add_alert <id>  "2077-04-09 11:55"> with the id of a task')
 def step_impl(context):
-   context.commands.send_message(f'!add_alert {context.id} "2023-04-09 11:55"')
+   context.commands.send_message(f'!add_alert {context.id} "2077-04-09 11:55"')
 
 
 @then(u'the bot outputs "Alert has been assigned to the task!"')
