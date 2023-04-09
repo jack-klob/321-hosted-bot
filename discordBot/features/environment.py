@@ -3,6 +3,7 @@ from test_utils.api_connection import APIConnection
 from test_utils.test_bot_commands import TestBotCommands
 from dotenv import load_dotenv
 import os
+import time
 
 load_dotenv()
 TOKEN = os.environ['TEST_TOKEN']
@@ -13,6 +14,7 @@ def before_all(context):
     commands.send_message("-------- **Start of tests** --------")
 
 def before_feature(context, feature):
+    time.sleep(0.2)
     commands.send_message(f'**Feature: {feature.name}**')
 
 def before_scenario(context, scenario):

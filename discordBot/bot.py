@@ -54,6 +54,21 @@ async def task_delete(ctx, id):
         await ctx.send(f'Task with id {id} deleted')
     else:
         await ctx.send("An error occured when trying to delete task")
+
+
+@bot.command(name = 'due_date')
+async def due_date(ctx, id, *args):
+
+    due_date = " ".join(args)
+
+    url = f'{baseurl}/due-date/{id}'
+    data = {"due_date": due_date}
+    response = requests.post(url=url, data=data)
+
+    if response.status_code == 200:
+        await ctx.send(f'Task {id} due date set to **{due_date}**')
+    else:
+        await ctx.send("A problem occurred when trying to add a due date")
     
         
 
