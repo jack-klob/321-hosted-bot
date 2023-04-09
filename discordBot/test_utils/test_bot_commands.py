@@ -47,7 +47,7 @@ class TestBotCommands():
         if self._sent_mesage_id:
             i = 0
             while last_message['id'] == self._sent_mesage_id:
-                time.sleep(0.15)
+                time.sleep(0.3)
                 last_message = self.read_last_message()
                 i += 1
                 if i > 5:
@@ -60,6 +60,7 @@ class TestBotCommands():
         '''
         Get the last message sent to the testingbot channel
         '''
+        time.sleep(0.05)
         r = requests.get(self._url, headers=self._headers)
 
         if r.status_code == 200:
