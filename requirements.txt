@@ -2,3 +2,4 @@ behave
 discord
 python-dotenv
 PyHamcrest
+requests

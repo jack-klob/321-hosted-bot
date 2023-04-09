@@ -1,17 +1,7 @@
 import json
 import requests
 import time
-import discord
-from discord.ext import commands
 
-class TestableBot(commands.Bot):
-    '''
-    Class to use instead of base Bot class. Allows the bot to respond to messages
-    from other bots. Needed for BDD testing
-    '''
-    async def process_commands(self, message: discord.Message, /) -> None:
-        ctx = await self.get_context(message)
-        await self.invoke(ctx)
 
 class TestBotCommands():
     '''
@@ -57,7 +47,7 @@ class TestBotCommands():
         if self._sent_mesage_id:
             i = 0
             while last_message['id'] == self._sent_mesage_id:
-                time.sleep(0.15)
+                time.sleep(0.3)
                 last_message = self.read_last_message()
                 i += 1
                 if i > 5:
@@ -70,6 +60,7 @@ class TestBotCommands():
         '''
         Get the last message sent to the testingbot channel
         '''
+        time.sleep(0.05)
         r = requests.get(self._url, headers=self._headers)
 
         if r.status_code == 200:
