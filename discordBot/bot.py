@@ -58,8 +58,14 @@ async def task_delete(ctx, id):
 
 @bot.command(name = 'due_date')
 async def due_date(ctx, id, *args):
-
+    url = f'{baseurl}/task/{id}'
     due_date = " ".join(args)
+    guild_id = ctx.guild.id
+    task = json.loads(requests.get(url=url).text)
+
+    if 'id' not in task or task['guild'] != guild_id:
+        await ctx.send(f'Task with id {id} does not exist')
+        return
 
     url = f'{baseurl}/due-date/{id}'
     data = {"due_date": due_date}
