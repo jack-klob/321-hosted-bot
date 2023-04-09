@@ -10,4 +10,4 @@ Feature: Due Date
         Given a user
         And an id for a created task
         When the user inputs <!due_date <id> "12:15 2023/04/06"> with the id of a task
-        Then the bot outputs "Due date must be in format YYYY-MM-DD HH:MM"
+        Then the bot responds with "Due date must be in format YYYY-MM-DD HH:MM"

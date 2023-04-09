@@ -68,7 +68,7 @@ async def due_date(ctx, id, *args):
     if response.status_code == 200:
         await ctx.send(f'Task {id} due date set to **{due_date}**')
     else:
-        await ctx.send("A problem occurred when trying to add a due date")
+        await ctx.send("Due date must be in format YYYY-MM-DD HH:MM")
     
         
 
