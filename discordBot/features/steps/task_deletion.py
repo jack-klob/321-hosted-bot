@@ -14,7 +14,11 @@ def step_impl(context):
     print(response)
     context.id = response['id']
 
-    
+@given(u'an id for a task in another server')
+def step_impl(context):
+    response = json.loads(APIConnection.create_task("Fake server", APIConnection.FAKE_GUILD).text)
+    context.id = response['id']
+
 
 @given(u'an id for a task that does not exist')
 def step_impl(context):
