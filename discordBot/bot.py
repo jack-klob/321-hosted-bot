@@ -41,7 +41,7 @@ async def task_delete(ctx, id):
     url = f'{baseurl}/task/{id}'
     guild_id = ctx.guild.id
 
-    task = json.loads(requests.get(url=f'{baseurl}/task/{id}').text)
+    task = json.loads(requests.get(url=url).text)
 
     if 'id' not in task or task['guild'] != guild_id:
         await ctx.send(f'Task with id {id} does not exist')

@@ -14,10 +14,11 @@ def before_all(context):
     commands.send_message("-------- **Start of tests** --------")
 
 def before_feature(context, feature):
-    time.sleep(0.2)
+    time.sleep(0.3)
     commands.send_message(f'**Feature: {feature.name}**')
 
 def before_scenario(context, scenario):
+    time.sleep(0.1)
     commands.send_message(f'**Scenario: {scenario.name}**')
 
 
