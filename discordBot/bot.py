@@ -58,7 +58,7 @@ async def task_delete(ctx, id):
     url = f'{baseurl}/task/{id}'
     guild_id = ctx.guild.id
 
-    task = json.loads(requests.get(url=f'{baseurl}/task/{id}').text)
+    task = json.loads(requests.get(url=url).text)
 
     if 'id' not in task or task['guild'] != guild_id:
         await ctx.send(f'Task with id {id} does not exist')
@@ -96,6 +96,29 @@ async def add_alert(ctx, id=None, alert=None):
             await ctx.send("Alert has been assigned to the task!")
         else:
             await ctx.send("A problem occurred when trying to add an alert") 
+        
+
+
+@bot.command(name = 'due_date')
+async def due_date(ctx, id, *args):
+    url = f'{baseurl}/task/{id}'
+    due_date = " ".join(args)
+    guild_id = ctx.guild.id
+    task = json.loads(requests.get(url=url).text)
+
+    if 'id' not in task or task['guild'] != guild_id:
+        await ctx.send(f'Task with id {id} does not exist')
+        return
+
+    url = f'{baseurl}/due-date/{id}'
+    data = {"due_date": due_date}
+    response = requests.post(url=url, data=data)
+
+    if response.status_code == 200:
+        await ctx.send(f'Task {id} due date set to **{due_date}**')
+    else:
+        await ctx.send("Due date must be in format YYYY-MM-DD HH:MM")
+    
         
 
 #Function to check if current time matches any alert time
