@@ -11,7 +11,7 @@ class APIConnection():
     _guild_id = 1094137227484856360
 
     # url where backend is hosted
-    _baseurl =  'http://127.0.0.1:8000'
+    _baseurl =  'https://321-hosted-backend.jack-klob.repl.co'
 
     @classmethod
     def create_task(cls, title):

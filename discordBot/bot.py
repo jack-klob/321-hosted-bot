@@ -5,7 +5,7 @@ from test_utils.testable_bot import TestableBot
 import requests
 
 # backend currently must be hosted locally
-baseurl = 'http://127.0.0.1:8000'
+baseurl = 'https://321-hosted-backend.jack-klob.repl.co'
 
 load_dotenv()
 TOKEN = os.environ['DISCORD_TOKEN']
