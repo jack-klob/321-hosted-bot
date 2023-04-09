@@ -15,13 +15,14 @@ load_dotenv()
 TOKEN = os.environ['DISCORD_TOKEN']
 
 bot = TestableBot(intents=discord.Intents.all(), command_prefix='!')
-channel_id = 1090771155163549796 # Replace with your channel ID
+channel_id = 1094137655568105522 # Replace with your channel ID
 
 @bot.event
 async def on_ready():
     print(f"{bot.user} has connected to the server")
     channel = bot.get_channel(1090771155163549796)
     await channel.send("Running")
+    url = f'{baseurl}/task'
     response = requests.get(url=url)
     reminders = json.loads(response.text)
     #at start of Discord bot run time, check for any tasks that have a reminder and add them to the alert_times dictionary
@@ -44,7 +45,7 @@ async def task_creation(ctx, *args):
     title = " ".join(args)
     guild_id = ctx.guild.id
 
-    url = baseurl + f"/task"
+    url =  f'{baseurl}/task'
     response = requests.post(url=url, data={"title": title, 'guild' : guild_id})
     
     if response.status_code == 201:
@@ -75,7 +76,7 @@ async def task_delete(ctx, id):
 @bot.command(name = 'add_alert', help = '!add_alert <task id> <YYYY-MM-DD HH:MM>  Command for adding due date alerts for a task')
 async def add_alert(ctx, id=None, alert=None):
 
-    url = baseurl + f"reminder/{id}"
+    url =  f'{baseurl}/reminder/{id}'
     
     if alert is None: # no alert given
         response = requests.get(url=url)
@@ -107,11 +108,13 @@ async def check_alerts():
             print("Alert checking")
             print(f"current time: {current_time}, alert time: {alert_time}")
             if current_time >= alert_time:
-                print("Alerting")
+                print(f"Alerting id: {id}")
                 await channel.send(f"@everyone An alert for a task with id: {id} has occured!")
                 idsToPop.append(id)
         for ID in idsToPop: #Remove all the ids that have been alerted so we dont Alert more then once
             alert_times.pop(ID)
+            print(f"Removed {ID} from alert_times")
+        idsToPop = []
         await asyncio.sleep(60) # Check every minute
 
 bot.run(TOKEN)

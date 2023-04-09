@@ -24,9 +24,9 @@ def step_impl(context):
     context.commands.send_message(f'!add_alert {context.id} "2023-04-09 11:55"')
 
 
-@when(u'I wait \'120\' seconds')
+@when(u'the user waits \'90\' seconds')
 def step_impl(context):
-    time.sleep(120)
+    time.sleep(90)
 
 
 @then(u'the bot outputs "@everyone An alert for a task with id: <id> has occured!"')
