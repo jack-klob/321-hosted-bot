@@ -19,6 +19,11 @@ async def on_ready():
     channel = bot.get_channel(1090771155163549796)
     await channel.send("Running")
 
+@bot.event
+async def on_message(message):
+    print(message.content)
+    await bot.process_commands(message)
+
 @bot.command(name = 'create_task', help = 'Creates a task')
 async def task_creation(ctx, *args):
     if not args:
@@ -75,6 +80,42 @@ async def due_date(ctx, id, *args):
         await ctx.send(f'Task {id} due date set to **{due_date}**')
     else:
         await ctx.send("Due date must be in format YYYY-MM-DD HH:MM")
+
+
+def silence_mention(mention: str):
+    if '&' in mention:
+        return mention
+    else:
+        mention = mention[:2] + '&' + mention[2:]
+        return mention
+
+
+@bot.command(name = 'assign_user')
+async def assign_user(ctx: discord.abc.Messageable, id, *args):
+
+    url = f'{baseurl}/assignees/{id}'
+
+    if args is None:
+        await ctx.send("No assignees given")
+        return
+
+    assignees = [*args]
+    user_ids = [username[2:-1] for username in assignees]
+    print(user_ids)
+    print(assignees)
+    
+    data = {"assignees": user_ids}
+    print(f"data: {data}")
+    response = requests.put(url=url, data=data)
+
+    no_mentions = discord.AllowedMentions.none()
+
+    print(response)
+
+    if response.status_code == 200:
+        await ctx.send(f"assignees: {assignees} have been assigned to the task!", allowed_mentions=no_mentions)
+    else:
+        await ctx.send("A problem occurred when trying to add a assignees")
     
         
 
