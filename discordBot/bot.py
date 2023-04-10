@@ -41,14 +41,27 @@ async def task_creation(ctx, *args):
     else:
         await ctx.send("An error occured when trying to create the task")
 
+def is_task_available(ctx, id):
+    '''
+    return true if the task exists and is available to the user
+    return false if the tasks does not exist or is from another
+    server
+    '''
+    task = json.loads(requests.get(url=f'{baseurl}/task/{id}').text)
+    guild_id = ctx.guild.id
+
+    if 'id' not in task or task['guild'] != guild_id:
+        return False
+    
+    return True
+
+
 @bot.command(name = 'delete_task', help = 'Deleted a task')
 async def task_delete(ctx, id):
     url = f'{baseurl}/task/{id}'
     guild_id = ctx.guild.id
 
-    task = json.loads(requests.get(url=url).text)
-
-    if 'id' not in task or task['guild'] != guild_id:
+    if not is_task_available(ctx, id):
         await ctx.send(f'Task with id {id} does not exist')
         return
     
@@ -63,12 +76,9 @@ async def task_delete(ctx, id):
 
 @bot.command(name = 'due_date')
 async def due_date(ctx, id, *args):
-    url = f'{baseurl}/task/{id}'
     due_date = " ".join(args)
-    guild_id = ctx.guild.id
-    task = json.loads(requests.get(url=url).text)
 
-    if 'id' not in task or task['guild'] != guild_id:
+    if not is_task_available(ctx, id):
         await ctx.send(f'Task with id {id} does not exist')
         return
 
@@ -91,31 +101,37 @@ def silence_mention(mention: str):
 
 
 @bot.command(name = 'assign_user')
-async def assign_user(ctx: discord.abc.Messageable, id, *args):
-
+async def assign_user(ctx: discord.abc.Messageable, id = None, *args):
+    if not id.isdigit():
+        await ctx.send("Must provide id")
     url = f'{baseurl}/assignees/{id}'
+
+    guild_id = ctx.guild.id
 
     if args is None:
         await ctx.send("No assignees given")
         return
 
+    if not is_task_available(ctx, id):
+        await ctx.send(f'Task with id {id} does not exist')
+        return
+
     assignees = [*args]
-    user_ids = [username[2:-1] for username in assignees]
-    print(user_ids)
     print(assignees)
     
-    data = {"assignees": user_ids}
+    data = {"assignees": assignees}
     print(f"data: {data}")
     response = requests.put(url=url, data=data)
 
     no_mentions = discord.AllowedMentions.none()
 
     print(response)
+    print(response.text)
 
     if response.status_code == 200:
         await ctx.send(f"assignees: {assignees} have been assigned to the task!", allowed_mentions=no_mentions)
     else:
-        await ctx.send("A problem occurred when trying to add a assignees")
+        await ctx.send(f'{assignees} are already assigned to the task')
     
         
 
