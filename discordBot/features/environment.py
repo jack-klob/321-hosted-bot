@@ -1,13 +1,10 @@
 from behave import *
 from test_utils.api_connection import APIConnection
 from test_utils.test_bot_commands import TestBotCommands
-from dotenv import load_dotenv
-import os
+
 import time
 
-load_dotenv()
-TOKEN = os.environ['TEST_TOKEN']
-commands = TestBotCommands(TOKEN)
+commands = TestBotCommands()
 
 
 def before_all(context):

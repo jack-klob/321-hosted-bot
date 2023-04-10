@@ -42,7 +42,7 @@ async def on_ready():
 async def on_message(message):
     await bot.process_commands(message)
 
-@bot.command(name = 'create_task', help = 'Creates a task')
+@bot.command(name = 'create_task', help = '!create_task <task name>  Creates a task')
 async def task_creation(ctx, *args):
     if not args:
         await ctx.send("No task name given")
@@ -75,10 +75,11 @@ def is_task_available(ctx, id):
     return True
 
 
-@bot.command(name = 'delete_task', help = 'Deleted a task')
+@bot.command(name = 'delete_task', help = '!delete_task <task id>  Deletes a task')
 async def task_delete(ctx, id):
+    '''command to delete a task'''
+    
     url = f'{baseurl}/task/{id}'
-    guild_id = ctx.guild.id
 
     if not is_task_available(ctx, id):
         await ctx.send(f'Task with id {id} does not exist')
@@ -91,9 +92,9 @@ async def task_delete(ctx, id):
     else:
         await ctx.send("An error occured when trying to delete task")
 
-'''Command for adding due date alerts for a task'''
 @bot.command(name = 'add_alert', help = '!add_alert <task id> <YYYY-MM-DD HH:MM>  Command for adding due date alerts for a task')
 async def add_alert(ctx, id=None, alert=None):
+    '''Command for adding due date alerts for a task'''
 
     url =  f'{baseurl}/reminder/{id}'
     
@@ -119,7 +120,7 @@ async def add_alert(ctx, id=None, alert=None):
         
 
 
-@bot.command(name = 'due_date')
+@bot.command(name = 'due_date', help='!due_date <task id> <YYYY-MM-DD HH:MM>  add due date to task')
 async def due_date(ctx, id, *args):
     due_date = " ".join(args)
 
@@ -137,7 +138,7 @@ async def due_date(ctx, id, *args):
         await ctx.send("Due date must be in format YYYY-MM-DD HH:MM")
 
 
-@bot.command(name = 'assign_user')
+@bot.command(name = 'assign_user', help='!assign_user <task id> <username>')
 async def assign_user(ctx: discord.abc.Messageable, id = None, *args):
     
     if id is None or not id.isdigit():

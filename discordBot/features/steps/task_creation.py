@@ -1,14 +1,10 @@
-import os
 from behave import *
-from dotenv import load_dotenv
 from test_utils.test_bot_commands import TestBotCommands
 from hamcrest import assert_that, equal_to
 
 @given(u'a user')
 def step_impl(context):
-    load_dotenv()
-    TOKEN = os.environ['TEST_TOKEN']
-    context.commands = TestBotCommands(TOKEN)
+    context.commands = TestBotCommands()
 
 
 @when(u'the user inputs "{command}"')

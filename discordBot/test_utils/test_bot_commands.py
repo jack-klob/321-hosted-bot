@@ -11,8 +11,12 @@ class TestBotCommands():
     and github actions CI
     '''
 
-    def __init__(self, TOKEN):
-        self.TOKEN = TOKEN
+    def __init__(self):
+        # storing a bot token in plain text is very bad practice
+        # this is done for the testing bot to make testing easier for the TA
+        # the testing bot does not have any functionality besides sending and receiving messages
+        # and it is only a member of our testing server
+        self.TOKEN = 'MTA5MjU1OTMzMjYxODU1NTU0Mw.GWzDz5._oEMzUVA7i0C-9EucKjFnmM61vlmS5DQeJxERQ'
         self._sent_mesage_id = 0
 
         # the specific testing channel id in testing discord server
@@ -20,7 +24,7 @@ class TestBotCommands():
         self._url = f"https://discordapp.com/api/channels/{channel_id}/messages"
     
         self._headers = { 
-            "authorization": f'Bot {TOKEN}',
+            "authorization": f'Bot {self.TOKEN}',
             "Content-Type":"application/json"
         }
 
