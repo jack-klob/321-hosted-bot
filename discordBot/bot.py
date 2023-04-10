@@ -140,14 +140,6 @@ async def due_date(ctx, id, *args):
         await ctx.send("Due date must be in format YYYY-MM-DD HH:MM")
 
 
-def silence_mention(mention: str):
-    if '&' in mention:
-        return mention
-    else:
-        mention = mention[:2] + '&' + mention[2:]
-        return mention
-
-
 @bot.command(name = 'assign_user')
 async def assign_user(ctx: discord.abc.Messageable, id = None, *args):
     
