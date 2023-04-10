@@ -15,8 +15,7 @@ def step_impl(context):
 
 @given(u'a user testUser has been assigned to the task with id <id>')
 def step_impl(context):
-    context.commands.send_message(f'!assign_user {context.id} testUser')
-    time.sleep(1)
+    APIConnection.add_user(context.id, "testUser")
 
 
 @then(u'the bot outputs "id: <id>, Created task from test, [\'testUser\'], None, None"')

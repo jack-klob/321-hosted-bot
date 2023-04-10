@@ -22,7 +22,6 @@ def before_scenario(context, scenario):
     commands.send_message(f'**Scenario: {scenario.name}**')
 
 
-def after_scenario(contex, scenario):
+def after_scenario(context, scenario):
     APIConnection.delete_all_test_tasks()
-    print("Deleted all testing tasks from the database")
     

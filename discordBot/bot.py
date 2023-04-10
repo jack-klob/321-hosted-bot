@@ -23,7 +23,6 @@ def format_date_to_print(date: str):
 
 @bot.event
 async def on_ready():
-    print(f"{bot.user} has connected to the server")
     channel = bot.get_channel(1094031740462436446)
     await channel.send("Running")
     url = f'{baseurl}/task'
@@ -41,7 +40,6 @@ async def on_ready():
 
 @bot.event
 async def on_message(message):
-    print(message.content)
     await bot.process_commands(message)
 
 @bot.command(name = 'create_task', help = 'Creates a task')
@@ -87,7 +85,6 @@ async def task_delete(ctx, id):
         return
     
     r = requests.delete(url=url)
-    print(r)
     
     if r.status_code == 204:
         await ctx.send(f'Task with id {id} deleted')
@@ -222,17 +219,13 @@ async def check_alerts():
     while True:
         current_time = datetime.now()
         for id, alert_time in alert_times.items():
-            print("Alert checking")
-            print(f"current time: {current_time}, alert time: {alert_time}")
             if current_time >= alert_time:
-                print(f"Alerting id: {id}")
                 channel = bot.get_channel(channel_ids[id])
                 await channel.send(f"@everyone An alert for a task with id: {id} has occured!")
                 idsToPop.append(id)
         for ID in idsToPop: #Remove all the ids that have been alerted so we dont Alert more then once
             alert_times.pop(ID)
             channel_ids.pop(ID)
-            print(f"Removed {ID} from alert_times and channel_ids")
         idsToPop = []
         await asyncio.sleep(60) # Check every minute
 

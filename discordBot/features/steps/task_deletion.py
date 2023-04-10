@@ -6,7 +6,6 @@ from test_utils.api_connection import APIConnection
 from hamcrest import assert_that, equal_to
 import json
 
-###############################################################
 
 @given(u'an id for a created task')
 def step_impl(context):
@@ -25,7 +24,7 @@ def step_impl(context):
     tasks = json.loads(APIConnection.get_list_all().text)
     context.id = int(tasks[-1]['id']) + 100
 
-###############################################################
+
 
     
 @when(u'the user inputs "!delete_task <id>" with the id of the task')
@@ -33,7 +32,9 @@ def step_impl(context):
     context.commands.send_message(f'!delete_task {context.id}')
     
 
-###############################################################
+
+
+
 
 @then(u'the bot outputs "Task with id <id> deleted"')
 def step_impl(context):

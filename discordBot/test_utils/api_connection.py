@@ -37,6 +37,12 @@ class APIConnection():
         return requests.get(url=url)
     
     @classmethod
+    def add_user(cls, id, user):
+        url = f'{cls._baseurl}/assignees/{id}'
+        data = {"assignees": [user]}
+        return requests.put(url=url, data=data)
+    
+    @classmethod
     def delete_all_test_tasks(cls):
         tasks = json.loads(cls.get_list_guild().text)
         tasks += json.loads(cls.get_list_guild(guild=cls.FAKE_GUILD).text)
