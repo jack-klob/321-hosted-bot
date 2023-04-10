@@ -1,6 +1,5 @@
 import time 
 from behave import *
-from dotenv import load_dotenv
 from test_utils.test_bot_commands import TestBotCommands
 from test_utils.api_connection import APIConnection
 from hamcrest import assert_that, equal_to
