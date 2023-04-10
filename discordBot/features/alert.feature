@@ -6,6 +6,7 @@ Feature: Alert Functionality
         When the user inputs <!add_alert <id>  "2077-04-09 11:55"> with the id of a task
         Then the bot outputs "Alert has been assigned to the task!"
         
+    @slow
     Scenario: Alert message is sent
         Given a user
         And an id for a created task
