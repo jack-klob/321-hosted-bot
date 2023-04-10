@@ -19,7 +19,7 @@ bot = TestableBot(intents=discord.Intents.all(), command_prefix='!')
 @bot.event
 async def on_ready():
     print(f"{bot.user} has connected to the server")
-    channel = bot.get_channel(1094137655568105522)
+    channel = bot.get_channel(1094031740462436446)
     await channel.send("Running")
     url = f'{baseurl}/task'
     response = requests.get(url=url)
@@ -33,6 +33,7 @@ async def on_ready():
             DD = DD.replace(":00", "")
             ND = datetime.strptime(DD,'%Y-%m-%d %H:%M')
             alert_times[tasks["id"]] = ND
+            channel_ids[tasks["id"]] = 1094031740462436446
     bot.loop.create_task(check_alerts())
 
 @bot.command(name = 'create_task', help = 'Creates a task')
