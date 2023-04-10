@@ -8,13 +8,18 @@ from datetime import datetime
 import asyncio
 
 alert_times = {} #Dictionary of alert times to be checked by the bot every minute Key=id and Value=alert time
-# backend currently must be hosted locally
 baseurl = 'https://321-hosted-backend.jack-klob.repl.co'
 channel_ids = {} #Dictionary of channel ids to be used by the bot to send messages to the correct channel Key=task id and Value=channel id
 load_dotenv()
 TOKEN = os.environ['DISCORD_TOKEN']
 
 bot = TestableBot(intents=discord.Intents.all(), command_prefix='!')
+
+def format_date_to_print(date: str):
+    date = date.replace("T", " ")
+    date = date.replace("Z", "")
+    date = date.replace(":00", "")
+    return date
 
 @bot.event
 async def on_ready():
@@ -28,13 +33,16 @@ async def on_ready():
     for tasks in reminders:
         DD = tasks["reminder"]
         if DD is not None:
-            DD = DD.replace("T", " ")
-            DD = DD.replace("Z", "")
-            DD = DD.replace(":00", "")
+            DD = format_date_to_print(DD)
             ND = datetime.strptime(DD,'%Y-%m-%d %H:%M')
             alert_times[tasks["id"]] = ND
             channel_ids[tasks["id"]] = 1094031740462436446
     bot.loop.create_task(check_alerts())
+
+@bot.event
+async def on_message(message):
+    print(message.content)
+    await bot.process_commands(message)
 
 @bot.command(name = 'create_task', help = 'Creates a task')
 async def task_creation(ctx, *args):
@@ -47,20 +55,34 @@ async def task_creation(ctx, *args):
 
     url =  f'{baseurl}/task'
     response = requests.post(url=url, data={"title": title, 'guild' : guild_id})
+    id = json.loads(response.text)['id']
     
     if response.status_code == 201:
-        await ctx.send(f"The task \"{title}\" has been created!")
+        await ctx.send(f"The task \"{title}\" has been created with id {id}!")
     else:
         await ctx.send("An error occured when trying to create the task")
+
+def is_task_available(ctx, id):
+    '''
+    return true if the task exists and is available to the user
+    return false if the tasks does not exist or is from another
+    server
+    '''
+    task = json.loads(requests.get(url=f'{baseurl}/task/{id}').text)
+    guild_id = ctx.guild.id
+
+    if 'id' not in task or task['guild'] != guild_id:
+        return False
+    
+    return True
+
 
 @bot.command(name = 'delete_task', help = 'Deleted a task')
 async def task_delete(ctx, id):
     url = f'{baseurl}/task/{id}'
     guild_id = ctx.guild.id
 
-    task = json.loads(requests.get(url=url).text)
-
-    if 'id' not in task or task['guild'] != guild_id:
+    if not is_task_available(ctx, id):
         await ctx.send(f'Task with id {id} does not exist')
         return
     
@@ -102,12 +124,9 @@ async def add_alert(ctx, id=None, alert=None):
 
 @bot.command(name = 'due_date')
 async def due_date(ctx, id, *args):
-    url = f'{baseurl}/task/{id}'
     due_date = " ".join(args)
-    guild_id = ctx.guild.id
-    task = json.loads(requests.get(url=url).text)
 
-    if 'id' not in task or task['guild'] != guild_id:
+    if not is_task_available(ctx, id):
         await ctx.send(f'Task with id {id} does not exist')
         return
 
@@ -119,36 +138,44 @@ async def due_date(ctx, id, *args):
         await ctx.send(f'Task {id} due date set to **{due_date}**')
     else:
         await ctx.send("Due date must be in format YYYY-MM-DD HH:MM")
-    
 
-'''Command for assigning users to a task'''
+
+def silence_mention(mention: str):
+    if '&' in mention:
+        return mention
+    else:
+        mention = mention[:2] + '&' + mention[2:]
+        return mention
+
+
 @bot.command(name = 'assign_user')
-async def assign_user(ctx: discord.abc.Messageable, id, args):
+async def assign_user(ctx: discord.abc.Messageable, id = None, *args):
+    
+    if id is None or not id.isdigit():
+        await ctx.send("Must provide id")
+        return
 
-    url = f'{baseurl}/assignees/{id}'
-
-    if args is None:
+    if not args:
         await ctx.send("No assignees given")
         return
 
-    assignees = [args]
-    #user_ids = [username[2:-1] for username in assignees]
-    #print(user_ids)
-    print(assignees)
+    if not is_task_available(ctx, id):
+        await ctx.send(f'Task with id {id} does not exist')
+        return
+   
+    url = f'{baseurl}/assignees/{id}'
 
+    assignees = [*args]
     data = {"assignees": assignees}
-    print(f"data: {data}")
     response = requests.put(url=url, data=data)
 
     no_mentions = discord.AllowedMentions.none()
 
-    print(response)
-    print(response.text)
-
     if response.status_code == 200:
-        await ctx.send(f"assignees: {assignees} have been assigned to the task!", allowed_mentions=no_mentions)
-    else:
-        await ctx.send("A problem occurred when trying to add a assignees")
+        await ctx.send(f"[{' '.join(assignees)}] have been assigned to the task!", allowed_mentions=no_mentions)
+    if response.status_code == 400:
+        duplicates = json.loads(response.text)['duplicate_users']
+        await ctx.send(f'{" ".join(duplicates)} are already assigned to the task', allowed_mentions=no_mentions)
 
 
 '''Command for listing all tasks by order of due date'''
@@ -164,14 +191,10 @@ async def list_tasks(ctx):
         for t in json.loads(response.text):
             dd= t["due_date"]
             if dd is not None:#formatting the due date
-                dd = dd.replace("T", " ")
-                dd = dd.replace("Z", "")
-                dd = dd.replace(":00", "")
+                dd = format_date_to_print(dd)
             ad = t["reminder"]
             if ad is not None:#formatting the alert
-                ad = ad.replace("T", " ")
-                ad = ad.replace("Z", "")
-                ad = ad.replace(":00", "")
+                ad = format_date_to_print(ad)
             await ctx.send(f'id: {t["id"]}, {t["title"]}, {t["assignees"]}, {dd}, {ad}')
 
 
@@ -193,14 +216,10 @@ async def list_tasks_by_user(ctx, user=None):
         for t in json.loads(response.text):
             dd= t["due_date"]
             if dd is not None: #formatting the due date
-                dd = dd.replace("T", " ")
-                dd = dd.replace("Z", "")
-                dd = dd.replace(":00", "")
+                dd = format_date_to_print(dd)
             ad = t["reminder"]
             if ad is not None:#formatting the alert
-                ad = ad.replace("T", " ")
-                ad = ad.replace("Z", "")
-                ad = ad.replace(":00", "")
+                ad = format_date_to_print(ad)
             await ctx.send(f'id: {t["id"]}, {t["title"]}, {t["assignees"]}, {dd}, {ad}')
 
 

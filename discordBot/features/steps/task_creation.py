@@ -22,6 +22,13 @@ def step_impl(context, reply):
     assert_that(message, equal_to(reply))
 
 
+@then(u'the bot outputs "The task "new task" has been created with id <id>!"')
+def step_impl(context):
+    reply = context.commands.read_reply()['content']
+    expected_sub = 'The task "new task" has been created with id '
+    assert_that(expected_sub in reply)
+
+
 
 
 
