@@ -93,30 +93,32 @@ async def task_delete(ctx, id):
         await ctx.send("An error occured when trying to delete task")
 
 @bot.command(name = 'add_alert', help = '!add_alert <task id> <YYYY-MM-DD HH:MM>  Command for adding due date alerts for a task')
-async def add_alert(ctx, id=None, alert=None):
+async def add_alert(ctx, id, *args):
     '''Command for adding due date alerts for a task'''
 
-    url =  f'{baseurl}/reminder/{id}'
-    
-    if alert is None: # no alert given
-        response = requests.get(url=url)
-        if response.status_code == 200:
-            await ctx.send(response.text)
-        else:
-            await ctx.send(f"No task found with that {id}")
-    elif id is None:# no idea is given
-        await ctx.send("No Task ID Given")
-    else:#all is good
-        alert_dt = datetime.strptime(alert, '%Y-%m-%d %H:%M')
-        alert_times[id]=alert_dt
-        data = {"reminder": alert_dt}
-        channel_ids[id] = ctx.channel.id
-        response = requests.put(url, data=data)
+    url = f'{baseurl}/reminder/{id}'
 
-        if response.status_code == 200:
-            await ctx.send("Alert has been assigned to the task!")
-        else:
-            await ctx.send("A problem occurred when trying to add an alert") 
+    if not args:  # no alert given
+      response = requests.get(url=url)
+      if response.status_code == 200:
+        await ctx.send(response.text)
+      else:
+        await ctx.send(f"No task found with that {id}")
+    elif id is None:  # no idea is given
+      await ctx.send("No Task ID Given")
+    else:  #all is good
+      alert = " ".join(args)
+      print(alert)
+      alert_dt = datetime.strptime(alert, '%Y-%m-%d %H:%M')
+      alert_times[id] = alert_dt
+      data = {"reminder": alert_dt}
+      channel_ids[id] = ctx.channel.id
+      response = requests.put(url, data=data)
+
+      if response.status_code == 200:
+        await ctx.send("Alert has been assigned to the task!")
+      else:
+        await ctx.send("A problem occurred when trying to add an alert")
         
 
 
